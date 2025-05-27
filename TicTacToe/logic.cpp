@@ -1,5 +1,6 @@
 
 #include"logic.h"
+#include <ctime>
 
 void logic::setup()
 {
