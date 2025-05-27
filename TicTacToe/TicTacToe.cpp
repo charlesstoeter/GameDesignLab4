@@ -74,52 +74,72 @@ int main(void)
 	srand(time(NULL));
 
 	al_flip_display();
-	while (!done && !gameover)
+
+	while (!done)
 	{
-		ALLEGRO_EVENT ev;
-		al_wait_for_event(event_queue, &ev);
-		if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
-		{
-			done = true;
-		}
-		else if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN)
-		{
-			if (ev.mouse.button & 1)
-			{
-				posX = ev.mouse.x;
-				posY = ev.mouse.y;
-
-				draw = true;
-			}
-		}
+		gameover = false;
+		game_logic.setup();
+		turn = 0;
 		draw_board();
-		
-		if (turn == 0 && draw) {
-			set_graphics_x_o(posX, posY, game_logic, turn);
-			draw = false;
-		}
-		else if (turn == 1) {
-			// Computer turn
-			int cx, cy;
-			bool moved = false;
+		al_flip_display();
 
-			while (!moved) { // Keep trying until a valid move is made, (computers turn)
-				cx = rand() % width;
-				cy = rand() % 375; // only upper part of board
+		while (!done && !gameover)
+		{
+			ALLEGRO_EVENT ev;
+			al_wait_for_event(event_queue, &ev);
+			if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
+			{
+				done = true;
+			}
+			else if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN)
+			{
+				if (ev.mouse.button & 1)
+				{
+					posX = ev.mouse.x;
+					posY = ev.mouse.y;
 
-				// Try to make a move — only succeeds if square is playable
-				int oldTurn = turn;
-				set_graphics_x_o(cx, cy, game_logic, turn);
-				if (turn != oldTurn) {
-					moved = true; // move succeeded
+					draw = true;
 				}
 			}
+			draw_board();
+
+			if (turn == 0 && draw) {
+				set_graphics_x_o(posX, posY, game_logic, turn);
+				draw = false;
+			}
+			else if (turn == 1) {
+				// Computer turn
+				int cx, cy;
+				bool moved = false;
+
+				while (!moved) { // Keep trying until a valid move is made, (computers turn)
+					cx = rand() % width;
+					cy = rand() % 375; // only upper part of board
+
+					// Try to make a move — only succeeds if square is playable
+					int oldTurn = turn;
+					set_graphics_x_o(cx, cy, game_logic, turn);
+					if (turn != oldTurn) {
+						moved = true; // move succeeded
+					}
+				}
+			}
+
+			game_message(gameover, game_logic, font); // check for game over conditions
+
+			al_flip_display();
 		}
 
-		game_message(gameover, game_logic, font); // check for game over conditions
 
-		al_flip_display();
+		if (!done)
+		{
+			al_rest(3.0); // Wait 3 seconds before restarting
+		}
+	
+
+
 	}
+	
 	al_rest(5.0);
 	al_destroy_event_queue(event_queue);
 	al_destroy_display(Screen);						//destroy our display object
