@@ -94,7 +94,27 @@ int main(void)
 		}
 		draw_board();
 		
-		
+		if (turn == 0 && draw) {
+			set_graphics_x_o(posX, posY, game_logic, turn);
+			draw = false;
+		}
+		else if (turn == 1) {
+			// Computer turn
+			int cx, cy;
+			bool moved = false;
+
+			while (!moved) {
+				cx = rand() % width;
+				cy = rand() % 375; // only upper part of board
+
+				// Try to make a move — only succeeds if square is playable
+				int oldTurn = turn;
+				set_graphics_x_o(cx, cy, game_logic, turn);
+				if (turn != oldTurn) {
+					moved = true; // move succeeded
+				}
+			}
+		}
 
 		game_message(gameover, game_logic, font);
 
