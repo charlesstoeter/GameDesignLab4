@@ -103,7 +103,7 @@ int main(void)
 			int cx, cy;
 			bool moved = false;
 
-			while (!moved) {
+			while (!moved) { // Keep trying until a valid move is made, (computers turn)
 				cx = rand() % width;
 				cy = rand() % 375; // only upper part of board
 
@@ -116,7 +116,7 @@ int main(void)
 			}
 		}
 
-		game_message(gameover, game_logic, font);
+		game_message(gameover, game_logic, font); // check for game over conditions
 
 		al_flip_display();
 	}
